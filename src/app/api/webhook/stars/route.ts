@@ -1,11 +1,9 @@
-import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Telegram sends successful_payment when Stars payment completes
     if (body?.successful_payment) {
       const payload = JSON.parse(body.successful_payment.invoice_payload || '{}');
       const userId = payload.userId;
@@ -18,7 +16,6 @@ export async function POST(request: Request) {
       if (item === 'booster') {
         const supabase = createServerSupabase();
 
-        // Give ×2 multiplier (you can add expiration logic later)
         const { error } = await supabase
           .from('users')
           .update({
@@ -32,7 +29,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Telegram requires 200 OK response for webhook
     return new Response('OK', { status: 200 });
   } catch (err: any) {
     console.error('Webhook error:', err);

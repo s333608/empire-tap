@@ -23,7 +23,7 @@ export async function POST(request: Request) {
           payload,
           provider_token: '',
           currency: 'XTR',
-          prices: [{ label: 'Booster', amount: 500 }], // 5 Stars
+          prices: [{ label: 'Booster', amount: 500 }],
         }),
       }
     );
