@@ -36,10 +36,3 @@ export async function POST(request: NextRequest) {
     return new Response('Error', { status: 500 });
   }
 }
-```
-
-Now push everything:
-```
-git add .
-git commit -m "fix all typescript errors"
-git push
