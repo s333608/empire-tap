@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { validateInitData, parseUserFromInitData } from '@/lib/telegram';
 import { createServerSupabase } from '@/lib/supabase';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { initData, balance, upgrades } = await request.json();
 

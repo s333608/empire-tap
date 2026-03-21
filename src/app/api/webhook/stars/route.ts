@@ -1,6 +1,7 @@
+import { NextRequest } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
@@ -35,3 +36,10 @@ export async function POST(request: Request) {
     return new Response('Error', { status: 500 });
   }
 }
+```
+
+Now push everything:
+```
+git add .
+git commit -m "fix all typescript errors"
+git push

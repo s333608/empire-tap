@@ -1,16 +1,36 @@
-import { isValid } from '@tma.js/init-data-node';
+import { NextResponse, NextRequest } from 'next/server';
+import { validateInitData, parseUserFromInitData } from '@/lib/telegram';
+import { createServerSupabase } from '@/lib/supabase';
 
-export function validateInitData(initDataRaw: string): boolean {
-  const token = process.env.TELEGRAM_BOT_TOKEN!;
+export async function POST(request: NextRequest) {
   try {
-    return isValid(initDataRaw, token, { expiresIn: 3600 });
-  } catch {
-    return false;
-  }
-}
+    const { initData } = await request.json();
 
-export function parseUserFromInitData(initDataRaw: string) {
-  const params = new URLSearchParams(initDataRaw);
-  const userStr = params.get('user');
-  return userStr ? JSON.parse(userStr) : null;
+    if (!validateInitData(initData)) {
+      return NextResponse.json({ error: 'Invalid auth' }, { status: 403 });
+    }
+
+    const user = parseUserFromInitData(initData);
+    if (!user?.id) {
+      return NextResponse.json({ error: 'No user' }, { status: 400 });
+    }
+
+    const supabase = createServerSupabase();
+
+    const { data, error } = await supabase
+      .from('users')
+      .upsert(
+        { telegram_id: user.id, username: user.username || user.first_name },
+        { onConflict: 'telegram_id' }
+      )
+      .select('telegram_id, balance, upgrades, last_sync, referred_by')
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ user: data });
+  } catch (err: any) {
+    console.error(err);
+    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
+  }
 }

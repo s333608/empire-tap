@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { parseUserFromInitData } from '@/lib/telegram';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { initData, item } = await request.json();
     const user = parseUserFromInitData(initData);
