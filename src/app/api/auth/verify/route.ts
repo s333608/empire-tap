@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         { telegram_id: user.id, username: user.username || user.first_name },
         { onConflict: 'telegram_id' }
       )
-      .select('telegram_id, balance, upgrades, last_sync, referred_by')
+      .select('telegram_id, balance, upgrades, buildings, quests, xp, level, last_sync, referred_by')
       .single();
 
     if (error) throw error;
